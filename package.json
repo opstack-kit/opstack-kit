@@ -1,0 +1,142 @@
+{
+  "name": "opstack-kit",
+  "version": "1.0.0",
+  "description": "Bridging hooks for OP Stack Chains",
+  "repository": "https://github.com/opstack-kit/opstack-kit",
+  "homepage": "https://opstack-kit.pages.dev",
+  "authors": ["Opstack Kit, opstack-kit"],
+  "keywords": [
+    "ethereum",
+    "eth",
+    "blockchain",
+    "dapps",
+    "web3",
+    "Optimism",
+    "OP",
+    "Superchain",
+    "tool",
+    "op-stack",
+    "opstack",
+    "opstack-kit",
+    "sdk",
+    "npm",
+    "docs"
+  ],
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "types": "./dist/types/index.d.ts",
+  "typings": "./dist/types/index.d.ts",
+  "sideEffects": false,
+  "files": [
+    "dist",
+    "!dist/**/*.tsbuildinfo",
+    "src/**/*.ts",
+    "!src/**/*.test.ts",
+    "!src/**/*.test-d.ts",
+    "!src/**/*.bench.ts",
+    "!src/_test/**/*"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/esm/index.js",
+      "default": "./dist/cjs/index.js"
+    },
+    "./hooks": {
+      "types": "./dist/types/hooks/index.d.ts",
+      "import": "./dist/esm/hooks/index.js",
+      "default": "./dist/cjs/hooks/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "typesVersions": {
+    "*": {
+      "hooks": [
+        "./dist/types/hooks/index.d.ts"
+      ]
+    }
+  },
+  "devDependencies": {
+    "@biomejs/biome": "1.0.0",
+    "@changesets/changelog-github": "^0.4.8",
+    "@changesets/cli": "^2.26.2",
+    "@eth-optimism/core-utils": "^0.12.3",
+    "@eth-optimism/sdk": "^3.1.2",
+    "@testing-library/react": "^14.0.0",
+    "@types/react": "^18.0.9",
+    "@types/react-dom": "^18.0.3",
+    "@types/use-sync-external-store": "^0.0.3",
+    "@viem/anvil": "^0.0.7",
+    "@vitest/coverage-v8": "^1.2.2",
+    "@wagmi/cli": "^2.1.1",
+    "dprint": "^0.42.5",
+    "ethers": "^5.7.0",
+    "happy-dom": "^12.10.3",
+    "react": "^18",
+    "react-dom": "^18",
+    "rimraf": "^5.0.1",
+    "simple-git-hooks": "^2.9.0",
+    "typedoc": "^0.25.3",
+    "typedoc-plugin-markdown": "^3.17.0",
+    "typescript": "5.0.4",
+    "vitest": "^1.2.2",
+    "@testing-library/react-hooks": "^8.0.1",
+    "@tanstack/react-query": ">=5.0.0",
+    "@wagmi/connectors": "^4.1.14"
+  },
+  "scripts": {
+    "build": "pnpm run clean && pnpm run build:cjs && pnpm run build:esm && pnpm run build:types",
+    "build:cjs": "tsc --project tsconfig.build.json --module commonjs --outDir ./dist/cjs --removeComments --verbatimModuleSyntax false && echo > ./dist/cjs/package.json '{\"type\":\"commonjs\"}'",
+    "build:esm": "tsc --project tsconfig.build.json --module es2015 --outDir ./dist/esm && echo > ./dist/esm/package.json \"{\\\"type\\\":\\\"module\\\",\\\"sideEffects\\\":false}\"",
+    "build:types": "tsc --project tsconfig.build.json --module esnext --declarationDir ./dist/types --emitDeclarationOnly --declaration --declarationMap",
+    "generate:docs": "pnpm run typedoc",
+    "release:check": "changeset status --verbose --since=origin/master",
+    "release:publish": "pnpm install && pnpm build && changeset publish",
+    "release:version": "changeset version && pnpm install --lockfile-only",
+    "clean": "rimraf dist",
+
+    "lint": "biome check .",
+    "lint:fix": "pnpm lint --apply",
+    "preinstall": "npx only-allow pnpm",
+    "test": "vitest dev",
+    "test:cov": "vitest dev --coverage",
+    "test:ci": "CI=true vitest --coverage",
+    "test:typecheck": "SKIP_GLOBAL_SETUP=true vitest typecheck",
+    "test:ui": "vitest dev --ui",
+    "typecheck": "tsc --noEmit",
+    "bench": "vitest bench",
+    "bench:ci": "CI=true vitest bench",
+    "dev:docs": "pnpm -r --filter docs dev",
+    "dev:example": "pnpm -r --filter example dev",
+    "prepare": "npx simple-git-hooks"
+  },
+  "dependencies": {
+    "@eth-optimism/contracts-ts": "^0.15.0",
+    "opstack-kit-x-alpha": "^1.0.0"
+  },
+  "peerDependencies": {
+    "@tanstack/react-query": ">=5.0.0",
+    "@wagmi/core": "^2.x",
+    "typescript": ">=5.0.4",
+    "viem": "^2.7.11",
+    "wagmi": "^2.x"
+  },
+  "peerDependenciesMeta": {
+    "typescript": {
+      "optional": true
+    }
+  },
+  "simple-git-hooks": {
+    "pre-commit": "pnpm format && pnpm lint:fix"
+  },
+  "pnpm": {
+    "overrides": {
+      "opstack-kit": "workspace:*"
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
