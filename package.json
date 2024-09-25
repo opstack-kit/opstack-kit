@@ -1,6 +1,6 @@
 {
   "name": "opstack-kit",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Bridging hooks for OP Stack Chains",
   "repository": "https://github.com/opstack-kit/opstack-kit",
   "homepage": "https://opstack-kit.pages.dev",
@@ -44,18 +44,16 @@
       "import": "./dist/esm/index.js",
       "default": "./dist/cjs/index.js"
     },
-    "./hooks": {
-      "types": "./dist/types/hooks/index.d.ts",
-      "import": "./dist/esm/hooks/index.js",
-      "default": "./dist/cjs/hooks/index.js"
+    "./chains": {
+      "types": "./dist/types/chains/index.d.ts",
+      "import": "./dist/esm/chains/index.js",
+      "default": "./dist/cjs/chains/index.js"
     },
     "./package.json": "./package.json"
   },
   "typesVersions": {
     "*": {
-      "hooks": [
-        "./dist/types/hooks/index.d.ts"
-      ]
+      "chains": ["./types/chains/index.d.ts"]
     }
   },
   "devDependencies": {
@@ -96,20 +94,12 @@
     "release:publish": "pnpm install && pnpm build && changeset publish",
     "release:version": "changeset version && pnpm install --lockfile-only",
     "clean": "rimraf dist",
-
     "lint": "biome check .",
     "lint:fix": "pnpm lint --apply",
     "preinstall": "npx only-allow pnpm",
-    "test": "vitest dev",
-    "test:cov": "vitest dev --coverage",
-    "test:ci": "CI=true vitest --coverage",
-    "test:typecheck": "SKIP_GLOBAL_SETUP=true vitest typecheck",
-    "test:ui": "vitest dev --ui",
     "typecheck": "tsc --noEmit",
     "bench": "vitest bench",
     "bench:ci": "CI=true vitest bench",
-    "dev:docs": "pnpm -r --filter docs dev",
-    "dev:example": "pnpm -r --filter example dev",
     "prepare": "npx simple-git-hooks"
   },
   "dependencies": {
