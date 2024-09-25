@@ -40,8 +40,6 @@
 - Simplifies cross L1 & L2 interactions
 
 ## Installation
-- #### Additional libraries
-  - ##### [opstack-kit-chains](https://opstack-kit.pages.dev/docs/opstack-kit-chains.html)
 
 ```bash [npm]
 npm i opstack-kit
@@ -59,10 +57,12 @@ or
 yarn add opstack-kit
 ```
 
+- #### Types
+  - ##### opstack-kit[/chains](https://opstack-kit.pages.dev/docs/types/chains.html)
+
 ## Example
 
-After [configuring](https://opstack-kit.pages.dev/docs/configuration.html
-) the network in your app, use ['opstack-kit-chains'](https://opstack-kit.pages.dev/docs/opstack-kit-chains.html) just import the "opstack-kit" hooks to start interacting with OP Stack chains.
+After use `opstack-kit/chains` for [configuring](https://opstack-kit.pages.dev/docs/configuration.html) the network in your app,  just import the `opstack-kit` hooks to start interacting with OP Stack chains.
 
 ```tsx
 import { useWriteDepositETH } from 'opstack-kit'
