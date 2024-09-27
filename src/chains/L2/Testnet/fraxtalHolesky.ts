@@ -3,7 +3,7 @@ import { chainConfig } from "viem/op-stack";
 
 const sourceId = 17000 // holesky
 
-export const fraxtalTestnet = /*#__PURE__*/ defineChain({
+export const fraxtalHolesky = /*#__PURE__*/ defineChain({
   ...chainConfig,
   id: 2522,
   name: 'Fraxtal Testnet',
