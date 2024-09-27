@@ -3,6 +3,7 @@
 export { mainnet } from "./L1/Mainnet/mainnet.js";
  // Testnet
  export { sepolia } from "./L1/Testnet/sepolia.js";
+ export { holesky } from "./L1/Testnet/holesky.js";
 
 // --- //
 
@@ -18,6 +19,7 @@ export { mainnet } from "./L1/Mainnet/mainnet.js";
 export { optimismSepolia } from "./L2/Testnet/optimismSepolia.js";
 export { baseSepolia } from "./L2/Testnet/baseSepolia.js";
 export { zoraSepolia } from "./L2/Testnet/zoraSepolia.js";
-export { fraxtalTestnet } from "./L2/Testnet/fraxtalTestnet.js";
+export { fraxtalHolesky } from "./L2/Testnet/fraxtalHolesky.js";
 export { modeTestnet } from "./L2/Testnet/modeTestnet.js";
 export { soneiumMinato } from "./L2/Testnet/soneiumMinato.js";
+export { garnetHolesky } from "./L2/Testnet/garnetHolesky.js";
