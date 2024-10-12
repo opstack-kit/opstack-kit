@@ -23,3 +23,4 @@ export { fraxtalHolesky } from "./L2/Testnet/fraxtalHolesky.js";
 export { modeTestnet } from "./L2/Testnet/modeTestnet.js";
 export { soneiumMinato } from "./L2/Testnet/soneiumMinato.js";
 export { garnetHolesky } from "./L2/Testnet/garnetHolesky.js";
+export { unichainSepolia } from "./L2/Testnet/unichainSepolia.js";
