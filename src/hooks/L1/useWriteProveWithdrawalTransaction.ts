@@ -1,4 +1,3 @@
-import { optimismPortalABI } from '../../constants/abi.js'
 import { useMutation } from '@tanstack/react-query'
 import {
   getLatestProposedL2BlockNumber,
@@ -11,6 +10,8 @@ import {
 import type { Chain, Hash } from 'viem'
 import { type Config, useConfig } from 'wagmi'
 import { getPublicClient, getWalletClient } from 'wagmi/actions'
+import { optimismPortalABI } from '../../constants/abi.js'
+import { useSwitchChain } from 'wagmi'
 
 import type { UseWriteOPActionBaseParameters } from '../../types/UseWriteOPActionBaseParameters.js'
 import type { UseWriteOPActionBaseReturnType } from '../../types/UseWriteOPActionBaseReturnType.js'
@@ -108,12 +109,16 @@ export function useWriteProveWithdrawalTransaction<config extends Config = Confi
   args: UseWriteProveWithdrawalTransactionParameters<config, context> = {},
 ): UseWriteProveWithdrawalTransactionReturnType<config, context> {
   const config = useConfig(args)
-
+  const { switchChain } = useSwitchChain();
+  
   const mutation = {
-    mutationFn({ l2ChainId, args, ...rest }: WriteProveWithdrawalTransactionParameters) {
-      const { l1ChainId, l2Chain } = validateL2Chain(config, l2ChainId)
+    mutationFn: async ({ l2ChainId, args, ...rest }: WriteProveWithdrawalTransactionParameters) => {
+      const { l1ChainId, l2Chain } = validateL2Chain(config, l2ChainId);
+      
+      // Switch to the correct L1 chain
+      await switchChain({ chainId: l1ChainId });
 
-      return writeMutation(config, { args, l1ChainId, l2Chain, l2ChainId: l2ChainId, ...rest })
+      return writeMutation(config, { args, l1ChainId, l2Chain, l2ChainId: l2ChainId, ...rest });
     },
     mutationKey: ['writeContract'],
   }
