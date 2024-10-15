@@ -1,9 +1,9 @@
-import { l2StandardBridgeABI } from '../../constants/abi.js'
 import { type Config } from '@wagmi/core'
 import { type WriteWithdrawERC20Parameters as WriteWithdrawERC20ActionParameters } from 'opstack-kit-x-alpha/actions'
 import type { ContractFunctionArgs } from 'viem'
-import { useConfig, useWriteContract } from 'wagmi'
+import { useConfig, useWriteContract, useSwitchChain } from 'wagmi'
 import type { WriteContractVariables } from 'wagmi/query'
+import { l2StandardBridgeABI } from '../../constants/abi.js'
 
 import type { UseWriteOPActionBaseParameters } from '../../types/UseWriteOPActionBaseParameters.js'
 import type { UseWriteOPActionBaseReturnType } from '../../types/UseWriteOPActionBaseReturnType.js'
@@ -18,7 +18,6 @@ export type WriteWithdrawERC20Parameters<
   chainId extends config['chains'][number]['id'] = number,
 > =
   & WriteOPContractBaseParameters<typeof ABI, typeof FUNCTION, config, chainId>
-  // The CrossDomainMessenger will add the gas we need, so we can pass 0 to the contract by default & make the argument optional
   & { args: Omit<Pick<WriteWithdrawERC20ActionParameters, 'args'>['args'], 'minGasLimit'> & { minGasLimit?: number } }
   & { chainId: number }
 
@@ -29,11 +28,7 @@ export type UseWriteWithdrawERC20ReturnType<config extends Config = Config, cont
   & Omit<UseWriteOPActionBaseReturnType<WriteWithdrawERC20Parameters, config, context>, 'write' | 'writeAsync'>
   & {
     writeWithdrawERC20: UseWriteOPActionBaseReturnType<WriteWithdrawERC20Parameters, config, context>['write']
-    writeWithdrawERC20Async: UseWriteOPActionBaseReturnType<
-      WriteWithdrawERC20Parameters,
-      config,
-      context
-    >['writeAsync']
+    writeWithdrawERC20Async: UseWriteOPActionBaseReturnType<WriteWithdrawERC20Parameters, config, context>['writeAsync']
   }
 
 /**
@@ -45,13 +40,18 @@ export function useWriteWithdrawERC20<config extends Config = Config, context = 
   args: UseWriteWithdrawERC20Parameters<config, context> = {},
 ): UseWriteWithdrawERC20ReturnType<config, context> {
   const config = useConfig(args)
+  const { switchChain } = useSwitchChain(); // Add useSwitchChain
   const { writeContract, writeContractAsync, ...writeReturn } = useWriteContract(args)
 
-  const writeWithdrawERC20: UseWriteWithdrawERC20ReturnType<config, context>['writeWithdrawERC20'] = (
+  const writeWithdrawERC20: UseWriteWithdrawERC20ReturnType<config, context>['writeWithdrawERC20'] = async (
     { chainId, args, ...rest },
     options,
   ) => {
     const { l2Chain } = validateL2Chain(config, chainId)
+    
+    // Switch to the correct L2
+    await switchChain({ chainId: l2Chain.id });
+    
     const l2StandardBridge = validateL2StandardBridgeContract(l2Chain).address
 
     return writeContract({
@@ -70,7 +70,7 @@ export function useWriteWithdrawERC20<config extends Config = Config, context = 
     >, options)
   }
 
-  const writeWithdrawERC20Async: UseWriteWithdrawERC20ReturnType<config, context>['writeWithdrawERC20Async'] = (
+  const writeWithdrawERC20Async: UseWriteWithdrawERC20ReturnType<config, context>['writeWithdrawERC20Async'] = async (
     { chainId, args, ...rest },
     options,
   ) => {
