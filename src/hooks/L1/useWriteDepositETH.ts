@@ -1,4 +1,3 @@
-import { optimismPortalABI } from '../../constants/abi.js'
 import { useMutation } from '@tanstack/react-query'
 import { type Config, getPublicClient, getWalletClient } from '@wagmi/core'
 import {
@@ -7,7 +6,8 @@ import {
   type WriteDepositETHParameters as WriteDepositETHActionParameters,
 } from 'opstack-kit-x-alpha/actions'
 import type { Chain } from 'viem'
-import { useConfig } from 'wagmi'
+import { useConfig, useSwitchChain } from 'wagmi'
+import { optimismPortalABI } from '../../constants/abi.js'
 import type { UseWriteOPActionBaseParameters } from '../../types/UseWriteOPActionBaseParameters.js'
 import type { UseWriteOPActionBaseReturnType } from '../../types/UseWriteOPActionBaseReturnType.js'
 import type { WriteOPContractBaseParameters } from '../../types/WriteOPContractBaseParameters.js'
@@ -21,7 +21,6 @@ export type WriteDepositETHParameters<
   chainId extends config['chains'][number]['id'] = number,
 > =
   & WriteOPContractBaseParameters<typeof ABI, typeof FUNCTION, config, chainId>
-  // We'll estimate the L2 gas needed so we can make the gasLimit argument optional
   & { args: Omit<Pick<WriteDepositETHActionParameters, 'args'>['args'], 'gasLimit'> & { gasLimit?: number } }
   & { l2ChainId: number }
 
@@ -87,10 +86,14 @@ export function useWriteDepositETH<config extends Config = Config, context = unk
   args: UseWriteDepositETHParameters<config, context> = {},
 ): UseWriteDepositETHReturnType<config, context> {
   const config = useConfig(args)
+  const { switchChain } = useSwitchChain()
 
   const mutation = {
-    mutationFn({ l2ChainId, args, ...rest }: WriteDepositETHParameters) {
+    mutationFn: async ({ l2ChainId, args, ...rest }: WriteDepositETHParameters) => {
       const { l2Chain, l1ChainId } = validateL2Chain(config, l2ChainId)
+      
+      // Switch to the correct L1 chain
+      await switchChain({ chainId: l1ChainId })
 
       return writeMutation(config, {
         args,
