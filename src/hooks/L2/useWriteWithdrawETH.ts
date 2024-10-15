@@ -1,9 +1,9 @@
-import { l2StandardBridgeABI } from '../../constants/abi.js'
 import { type Config } from '@wagmi/core'
 import { type WriteWithdrawETHParameters as WriteWithdrawETHActionParameters } from 'opstack-kit-x-alpha/actions'
 import type { ContractFunctionArgs } from 'viem'
-import { useAccount, useConfig, useWriteContract } from 'wagmi'
+import { useAccount, useConfig, useWriteContract, useSwitchChain } from 'wagmi'
 import type { WriteContractVariables } from 'wagmi/query'
+import { l2StandardBridgeABI } from '../../constants/abi.js'
 
 import type { UseWriteOPActionBaseParameters } from '../../types/UseWriteOPActionBaseParameters.js'
 import type { UseWriteOPActionBaseReturnType } from '../../types/UseWriteOPActionBaseReturnType.js'
@@ -31,11 +31,7 @@ export type UseWriteWithdrawETHReturnType<config extends Config = Config, contex
   & Omit<UseWriteOPActionBaseReturnType<WriteWithdrawETHParameters, config, context>, 'write' | 'writeAsync'>
   & {
     writeWithdrawETH: UseWriteOPActionBaseReturnType<WriteWithdrawETHParameters, config, context>['write']
-    writeWithdrawETHAsync: UseWriteOPActionBaseReturnType<
-      WriteWithdrawETHParameters,
-      config,
-      context
-    >['writeAsync']
+    writeWithdrawETHAsync: UseWriteOPActionBaseReturnType<WriteWithdrawETHParameters, config, context>['writeAsync']
   }
 
 /**
@@ -49,12 +45,17 @@ export function useWriteWithdrawETH<config extends Config = Config, context = un
   const config = useConfig(args)
   const { writeContract, writeContractAsync, ...writeReturn } = useWriteContract(args)
   const account = useAccount(args)
+  const { switchChain } = useSwitchChain()
 
-  const writeWithdrawETH: UseWriteWithdrawETHReturnType<config, context>['writeWithdrawETH'] = (
+  const writeWithdrawETH: UseWriteWithdrawETHReturnType<config, context>['writeWithdrawETH'] = async (
     { chainId, args, ...rest },
     options,
   ) => {
     const { l2Chain } = validateL2Chain(config, chainId)
+
+    // Switch to the correct L2
+    await switchChain({ chainId: l2Chain.id })
+
     const l2StandardBridge = validateL2StandardBridgeContract(l2Chain).address
 
     return writeContract({
@@ -75,7 +76,7 @@ export function useWriteWithdrawETH<config extends Config = Config, context = un
     >, options)
   }
 
-  const writeWithdrawETHAsync: UseWriteWithdrawETHReturnType<config, context>['writeWithdrawETHAsync'] = (
+  const writeWithdrawETHAsync: UseWriteWithdrawETHReturnType<config, context>['writeWithdrawETHAsync'] = async (
     { chainId, args, ...rest },
     options,
   ) => {
