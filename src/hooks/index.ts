@@ -13,6 +13,13 @@ export {
   type UseWriteDepositERC20Parameters,
   type WriteDepositERC20Parameters,
 } from './L1/useWriteDepositERC20.js'
+//
+export {
+  useWriteDepositCustomGasToken,
+  type UseWriteDepositCustomGasParameters,
+  type WriteDepositCustomGasParameters,
+} from './L1/useWriteDepositCustomGasToken.js'
+//
 export {
   useWriteDepositETH,
   type UseWriteDepositETHParameters,
@@ -40,3 +47,10 @@ export {
   type UseWriteWithdrawETHParameters,
   type WriteWithdrawETHParameters,
 } from './L2/useWriteWithdrawETH.js'
+//
+export {
+  useWriteInitiateWithdrawalETH,
+  type UseWriteWithdrawInitiateParameters,
+  type WriteWithdrawInitiateParameters,
+} from './L2/useWriteInitiateWithdrawalETH.js'
+//
