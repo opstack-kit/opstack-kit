@@ -13,6 +13,13 @@ export {
   type UseWriteDepositERC20Parameters,
   type WriteDepositERC20Parameters,
 } from './hooks/L1/useWriteDepositERC20.js'
+//
+export {
+  useWriteDepositCustomGasToken,
+  type UseWriteDepositCustomGasParameters,
+  type WriteDepositCustomGasParameters,
+} from './hooks/L1/useWriteDepositCustomGasToken.js'
+//
 export {
   useWriteDepositETH,
   type UseWriteDepositETHParameters,
@@ -43,3 +50,10 @@ export {
   type UseWriteWithdrawETHParameters,
   type WriteWithdrawETHParameters,
 } from './hooks/L2/useWriteWithdrawETH.js'
+//
+export {
+  useWriteInitiateWithdrawalETH,
+  type UseWriteWithdrawInitiateParameters,
+  type WriteWithdrawInitiateParameters,
+} from './hooks/L2/useWriteInitiateWithdrawalETH.js'
+//
