@@ -38,6 +38,7 @@
 ## Features
 
 - Simplifies cross L1 & L2 interactions
+- Supports Custom Gas Token deposit & withdrawal functions
 
 ## Installation
 
