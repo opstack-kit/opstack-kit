@@ -1,5 +1,5 @@
 export function L2ChainNotConfiguredMessage(l2ChainId: number) {
-  return `L2 chain with id '${l2ChainId}' is not configured, make sure to add it to your chains array. https://opstack-kit.pages.dev/docs/opstack-kit-chains.html`
+  return `L2 chain with id '${l2ChainId}' is not configured, make sure to add it to your chains array. https://opstack-kit.pages.dev/docs/types/chains.html`
 }
 
 export function L2ChainMissingSourceChainMessage(l2ChainName: string) {
