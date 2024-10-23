@@ -6137,6 +6137,22 @@ export const optimismPortalABI = [
     name: 'depositTransaction',
     outputs: [],
   },
+
+  {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [
+      { name: '_to', internalType: 'address', type: 'address' },
+      { name: '_mint', internalType: 'uint256', type: 'uint256' },
+      { name: '_value', internalType: 'uint256', type: 'uint256' },
+      { name: '_gasLimit', internalType: 'uint64', type: 'uint64' },
+      { name: '_isCreation', internalType: 'bool', type: 'bool' },
+      { name: '_data', internalType: 'bytes', type: 'bytes' },
+    ],
+    name: 'depositERC20Transaction',
+    outputs: [],
+  },
+  
   {
     stateMutability: 'payable',
     type: 'function',
@@ -15385,6 +15401,21 @@ export const abis = {
         { name: '_data', internalType: 'bytes', type: 'bytes' },
       ],
       name: 'depositTransaction',
+      outputs: [],
+    },
+
+    {
+      stateMutability: 'nonpayable',
+      type: 'function',
+      inputs: [
+        { name: '_to', internalType: 'address', type: 'address' },
+        { name: '_mint', internalType: 'uint256', type: 'uint256' },
+        { name: '_value', internalType: 'uint256', type: 'uint256' },
+        { name: '_gasLimit', internalType: 'uint64', type: 'uint64' },
+        { name: '_isCreation', internalType: 'bool', type: 'bool' },
+        { name: '_data', internalType: 'bytes', type: 'bytes' },
+      ],
+      name: 'depositERC20Transaction',
       outputs: [],
     },
 
