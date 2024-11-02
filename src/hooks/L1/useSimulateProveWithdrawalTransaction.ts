@@ -3,19 +3,21 @@
 import { optimismPortalABI } from '../../constants/abi.js'
 import { useQuery } from '@tanstack/react-query'
 import {
-  getLatestProposedL2BlockNumber,
-  getOutputForL2Block,
-  getProveWithdrawalTransactionArgs,
   getWithdrawalMessages,
   simulateProveWithdrawalTransaction,
 } from 'opstack-kit-x-alpha/actions'
-import { type Hash } from 'viem'
+import {
+  getProveWithdrawalTransactionArgs
+} from 'opstack-kit-x-alpha-v3/actions'
+import type { ChainContract, Hash } from 'viem'
+import { getTransactionReceipt } from 'viem/actions'
+import { getL2Output } from 'viem/op-stack'
 import { type Config, useAccount, useConfig, usePublicClient } from 'wagmi'
 import { hashFn, simulateContractQueryKey } from 'wagmi/query'
 
 import type { UseSimulateOPActionBaseParameters } from '../../types/UseSimulateOPActionBaseParameters.js'
 import type { UseSimulateOPActionBaseReturnType } from '../../types/UseSimulateOPActionBaseReturnType.js'
-import { validateL2Chain, validateL2OutputOracleContract, validatePortalContract } from '../../util/validateChains.js'
+import { validateL2Chain, validatePortalContract } from '../../util/validateChains.js'
 
 const ABI = optimismPortalABI
 const FUNCTION = 'proveWithdrawalTransaction'
@@ -56,7 +58,6 @@ export function useSimulateProveWithdrawalTransaction<
   const l1PublicClient = usePublicClient({ chainId: l1ChainId })!
   const l2PublicClient = usePublicClient({ chainId: l2ChainId })!
 
-  const l2OutputOracle = validateL2OutputOracleContract(l1ChainId, l2Chain).address
   const portal = validatePortalContract(l1ChainId, l2Chain).address
 
   const query = {
@@ -65,13 +66,19 @@ export function useSimulateProveWithdrawalTransaction<
         hash: args.withdrawalTxHash,
       })
 
-      const { l2BlockNumber } = await getLatestProposedL2BlockNumber(l1PublicClient, {
-        l2OutputOracle,
+      const receipt = await getTransactionReceipt(l2PublicClient, {
+        hash: args.withdrawalTxHash,
       })
-
-      const output = await getOutputForL2Block(l1PublicClient, {
-        l2BlockNumber,
-        l2OutputOracle,
+    
+      const output = await getL2Output(l1PublicClient, {
+        l2BlockNumber: receipt.blockNumber,
+        targetChain: l2PublicClient.chain as unknown as { 
+            contracts: { 
+                portal: { [key: number]: ChainContract }; 
+                l2OutputOracle: { [key: number]: ChainContract }; 
+                disputeGameFactory: { [key: number]: ChainContract }; 
+            }
+          },
       })
 
       const simulateProveWithdrawalTransactionArgs = await getProveWithdrawalTransactionArgs(l2PublicClient, {
