@@ -105,12 +105,14 @@
   "dependencies": {
     "@eth-optimism/contracts-ts": "^0.15.0",
     "opstack-kit-x-alpha": "^1.0.0"
+    "opstack-kit-x-alpha-v2": "^1.0.0",
+    "opstack-kit-x-alpha-v3": "^1.0.0"
   },
   "peerDependencies": {
     "@tanstack/react-query": ">=5.0.0",
     "@wagmi/core": "^2.x",
     "typescript": ">=5.0.4",
-    "viem": "^2.7.11",
+    "viem": "^2.21.37",
     "wagmi": "^2.x"
   },
   "peerDependenciesMeta": {
