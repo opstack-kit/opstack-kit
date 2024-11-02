@@ -1,13 +1,15 @@
 import { useMutation } from '@tanstack/react-query'
 import {
-  getLatestProposedL2BlockNumber,
-  getOutputForL2Block,
-  getProveWithdrawalTransactionArgs,
   getWithdrawalMessages,
   simulateProveWithdrawalTransaction,
   writeProveWithdrawalTransaction,
 } from 'opstack-kit-x-alpha/actions'
-import type { Chain, Hash } from 'viem'
+import {
+  getProveWithdrawalTransactionArgs
+} from 'opstack-kit-x-alpha-v3/actions'
+import type { Chain, ChainContract, Hash } from 'viem'
+import { getTransactionReceipt } from 'viem/actions'
+import { getL2Output } from 'viem/op-stack'
 import { type Config, useConfig } from 'wagmi'
 import { getPublicClient, getWalletClient } from 'wagmi/actions'
 import { optimismPortalABI } from '../../constants/abi.js'
@@ -16,8 +18,7 @@ import { useSwitchChain } from 'wagmi'
 import type { UseWriteOPActionBaseParameters } from '../../types/UseWriteOPActionBaseParameters.js'
 import type { UseWriteOPActionBaseReturnType } from '../../types/UseWriteOPActionBaseReturnType.js'
 import type { WriteOPContractBaseParameters } from '../../types/WriteOPContractBaseParameters.js'
-import { validateL2Chain, validateL2OutputOracleContract, validatePortalContract } from '../../util/validateChains.js'
-
+import { validateL2Chain, validatePortalContract } from '../../util/validateChains.js'
 const ABI = optimismPortalABI
 const FUNCTION = 'proveWithdrawalTransaction'
 
@@ -65,20 +66,25 @@ async function writeMutation(
   const l1PublicClient = await getPublicClient(config, { chainId: l1ChainId })!
   const l2PublicClient = await getPublicClient(config, { chainId: l2ChainId })!
 
-  const l2OutputOracle = validateL2OutputOracleContract(l1ChainId, l2Chain).address
   const portal = validatePortalContract(l1ChainId, l2Chain).address
 
   const withdrawalMessages = await getWithdrawalMessages(l2PublicClient, {
     hash: args.withdrawalTxHash,
   })
 
-  const { l2BlockNumber } = await getLatestProposedL2BlockNumber(l1PublicClient, {
-    l2OutputOracle,
+  const receipt = await getTransactionReceipt(l2PublicClient, {
+    hash: args.withdrawalTxHash,
   })
 
-  const output = await getOutputForL2Block(l1PublicClient, {
-    l2BlockNumber,
-    l2OutputOracle,
+  const output = await getL2Output(l1PublicClient, {
+    l2BlockNumber: receipt.blockNumber,
+    targetChain: l2PublicClient.chain as unknown as { 
+        contracts: { 
+            portal: { [key: number]: ChainContract }; 
+            l2OutputOracle: { [key: number]: ChainContract }; 
+            disputeGameFactory: { [key: number]: ChainContract }; 
+        }
+      },
   })
 
   const proveWithdrawalTransactionArgs = await getProveWithdrawalTransactionArgs(l2PublicClient, {
@@ -92,6 +98,7 @@ async function writeMutation(
     portal,
     ...rest,
   })
+
   return writeProveWithdrawalTransaction(walletClient, {
     args: proveWithdrawalTransactionArgs,
     account: walletClient.account.address,
@@ -101,20 +108,20 @@ async function writeMutation(
 }
 
 /**
- * Deposits ETH to L2 using the OptimismPortal contract
+ * Proves a withdrawal transaction using the OptimismPortal contract
  * @param parameters - {@link UseWriteProveWithdrawalTransactionParameters}
- * @returns wagmi [useWriteContract return type](https://alpha.wagmi.sh/react/api/hooks/useWrtieContract#return-type). {@link UseWriteProveWithdrawalTransactionReturnType}
+ * @returns wagmi [useWriteContract return type](https://alpha.wagmi.sh/react/api/hooks/useWriteContract#return-type). {@link UseWriteProveWithdrawalTransactionReturnType}
  */
 export function useWriteProveWithdrawalTransaction<config extends Config = Config, context = unknown>(
   args: UseWriteProveWithdrawalTransactionParameters<config, context> = {},
 ): UseWriteProveWithdrawalTransactionReturnType<config, context> {
   const config = useConfig(args)
   const { switchChain } = useSwitchChain();
-  
+
   const mutation = {
     mutationFn: async ({ l2ChainId, args, ...rest }: WriteProveWithdrawalTransactionParameters) => {
       const { l1ChainId, l2Chain } = validateL2Chain(config, l2ChainId);
-      
+
       // Switch to the correct L1 chain
       await switchChain({ chainId: l1ChainId });
 
