@@ -38,24 +38,28 @@
 ## Features
 
 - Simplifies cross L1 & L2 interactions
-- Supports Custom Gas Token deposit & withdrawal functions
+- Supports "CustomGasToken" deposit & withdrawal functions
+- Supports multi-functionality & new fault-proof feature
+- CLI command development tools
 
 ## Installation
 
+Recommend: use [Nodejs v20+](https://nodejs.org/en/download/prebuilt-installer/current) and add `-g` is a **global** package installation. ([guide](https://docs.npmjs.com/cli/v9/commands/npm-install#global-installation))
+
 ```bash [npm]
-npm i opstack-kit
+npm i -g opstack-kit
 ```
 or
 ```bash [pnpm]
-pnpm i opstack-kit
+pnpm i -g opstack-kit
 ```
 or
 ```bash [bun]
-bun i opstack-kit
+bun i -g opstack-kit
 ```
 or
 ```yarn
-yarn add opstack-kit
+yarn add -g opstack-kit
 ```
 
 - #### Types
