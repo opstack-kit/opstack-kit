@@ -1,10 +1,12 @@
 {
   "name": "opstack-kit",
-  "version": "1.1.0",
+  "version": "1.7.0",
   "description": "Bridging hooks for OP Stack Chains",
   "repository": "https://github.com/opstack-kit/opstack-kit",
   "homepage": "https://opstack-kit.pages.dev",
-  "authors": ["Opstack Kit, opstack-kit"],
+  "authors": [
+    "Opstack Kit, opstack-kit"
+  ],
   "keywords": [
     "ethereum",
     "eth",
@@ -15,6 +17,7 @@
     "OP",
     "Superchain",
     "tool",
+    "cli",
     "op-stack",
     "opstack",
     "opstack-kit",
@@ -24,6 +27,10 @@
   ],
   "license": "MIT",
   "type": "module",
+  "bin": {
+    "ok": "./dist/esm/cli/bin.js",
+    "opstack-kit": "./dist/esm/cli/bin.js"
+  },
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
   "types": "./dist/types/index.d.ts",
@@ -53,7 +60,9 @@
   },
   "typesVersions": {
     "*": {
-      "chains": ["./types/chains/index.d.ts"]
+      "chains": [
+        "./types/chains/index.d.ts"
+      ]
     }
   },
   "devDependencies": {
@@ -62,13 +71,16 @@
     "@changesets/cli": "^2.26.2",
     "@eth-optimism/core-utils": "^0.12.3",
     "@eth-optimism/sdk": "^3.1.2",
+    "@tanstack/react-query": ">=5.0.0",
     "@testing-library/react": "^14.0.0",
+    "@testing-library/react-hooks": "^8.0.1",
     "@types/react": "^18.0.9",
     "@types/react-dom": "^18.0.3",
     "@types/use-sync-external-store": "^0.0.3",
     "@viem/anvil": "^0.0.7",
     "@vitest/coverage-v8": "^1.2.2",
     "@wagmi/cli": "^2.1.1",
+    "@wagmi/connectors": "^4.1.14",
     "dprint": "^0.42.5",
     "ethers": "^5.7.0",
     "happy-dom": "^12.10.3",
@@ -79,16 +91,14 @@
     "typedoc": "^0.25.3",
     "typedoc-plugin-markdown": "^3.17.0",
     "typescript": "5.0.4",
-    "vitest": "^1.2.2",
-    "@testing-library/react-hooks": "^8.0.1",
-    "@tanstack/react-query": ">=5.0.0",
-    "@wagmi/connectors": "^4.1.14"
+    "vitest": "^1.2.2"
   },
   "scripts": {
-    "build": "pnpm run clean && pnpm run build:cjs && pnpm run build:esm && pnpm run build:types",
+    "build": "pnpm run clean && pnpm run build:cjs && pnpm run build:esm && pnpm run build:types && pnpm run build:cli",
     "build:cjs": "tsc --project tsconfig.build.json --module commonjs --outDir ./dist/cjs --removeComments --verbatimModuleSyntax false && echo > ./dist/cjs/package.json '{\"type\":\"commonjs\"}'",
     "build:esm": "tsc --project tsconfig.build.json --module es2015 --outDir ./dist/esm && echo > ./dist/esm/package.json \"{\\\"type\\\":\\\"module\\\",\\\"sideEffects\\\":false}\"",
     "build:types": "tsc --project tsconfig.build.json --module esnext --declarationDir ./dist/types --emitDeclarationOnly --declaration --declarationMap",
+    "build:cli": "tsc ./src/cli/bin.ts --outDir ./dist/esm/cli",
     "generate:docs": "pnpm run typedoc",
     "release:check": "changeset status --verbose --since=origin/master",
     "release:publish": "pnpm install && pnpm build && changeset publish",
@@ -104,7 +114,7 @@
   },
   "dependencies": {
     "@eth-optimism/contracts-ts": "^0.15.0",
-    "opstack-kit-x-alpha": "^1.0.0"
+    "opstack-kit-x-alpha": "^1.0.0",
     "opstack-kit-x-alpha-v2": "^1.0.0",
     "opstack-kit-x-alpha-v3": "^1.0.0"
   },
@@ -113,7 +123,11 @@
     "@wagmi/core": "^2.x",
     "typescript": ">=5.0.4",
     "viem": "^2.21.37",
-    "wagmi": "^2.x"
+    "wagmi": "^2.x",
+    "ts-node": "^10.9.2",
+    "commander": "^12.1.0",
+    "nanospinner": "^1.2.0",
+    "colorette": "^2.0.20"
   },
   "peerDependenciesMeta": {
     "typescript": {
