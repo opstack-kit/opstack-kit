@@ -15,8 +15,8 @@ export async function finalize(
     hash: `0x${string}`,
     chainIdL1: number, rpcUrlL1: string,
     chainIdL2: number, rpcUrlL2: string,
-    scanL1Url: string | undefined,
     portal: `0x${string}`,
+    scanL1Url: string | undefined,
 ) {
     const account = privateKeyToAccount(privateKey);
 
